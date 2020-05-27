@@ -1,4 +1,4 @@
-## Flying Objects Object Detection  
+## Flying Objects Detection  
 ### Classes  
 - drones (fixed wing and rotor)  
 - planes  
