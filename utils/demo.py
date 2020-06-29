@@ -113,8 +113,9 @@ if __name__ == "__main__":
                 if args.format == "visual":
                     visualized_output.save(out_filename)
                 elif args.format == "bbox":
-                    with open(args.output, "w"):
-                        json.dump(predictions, args.output)
+                    path = os.path.join(args.output, path)
+                    with open(path, "w") as f:
+                        json.dump(predictions, f)
             else:
                 cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
                 cv2.imshow(WINDOW_NAME, visualized_output.get_image()[:, :, ::-1])
