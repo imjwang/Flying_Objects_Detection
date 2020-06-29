@@ -6,7 +6,7 @@ import os
 import time
 import cv2
 import tqdm
-import json
+import pickle
 
 from detectron2.config import get_cfg
 from detectron2.data.detection_utils import read_image
@@ -113,9 +113,8 @@ if __name__ == "__main__":
                 if args.format == "visual":
                     visualized_output.save(out_filename)
                 elif args.format == "bbox":
-                    path = os.path.join(args.output, path)
-                    with open(path, "w") as f:
-                        json.dump(predictions, f)
+                    out_path = os.path.join(out_filename, path)
+                    pickle.dump(predictions, open(out_path, "wb"))
             else:
                 cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
                 cv2.imshow(WINDOW_NAME, visualized_output.get_image()[:, :, ::-1])
