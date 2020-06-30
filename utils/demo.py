@@ -7,6 +7,7 @@ import time
 import cv2
 import tqdm
 import json
+import torch
 
 from detectron2.config import get_cfg
 from detectron2.data.detection_utils import read_image
