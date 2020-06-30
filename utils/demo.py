@@ -114,7 +114,7 @@ if __name__ == "__main__":
                 if args.format == "visual" or args.format == "both":
                     visualized_output.save(out_filename)
                 if args.format == "json" or args.format == "both":
-                    out_path = os.path.join(out_filename, path)
+                    out_path = os.path.join(out_filename, path + '.json')
 
                     bbox = list(predictions["instances"].pred_boxes)
                     classes = list(predictions["instances"].pred_classes)
@@ -138,7 +138,7 @@ if __name__ == "__main__":
                         out[i]["class"] = jclasses[i]
                         out[i]["confidence"] = jconf[i]
 
-                    with open("test.json", "w") as f:
+                    with open(out_path, "w") as f:
                         json.dump(out, f)
 
             else:
