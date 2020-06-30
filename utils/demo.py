@@ -6,7 +6,7 @@ import os
 import time
 import cv2
 import tqdm
-import pickle
+import json
 
 from detectron2.config import get_cfg
 from detectron2.data.detection_utils import read_image
@@ -55,7 +55,7 @@ def get_parser():
     parser.add_argument(
         "--format",
         default="visual",
-        help="Specify output format. (bbox, mask, visual)"
+        help="Specify output format. (json, visual, both)"
     )
 
     parser.add_argument(
@@ -110,11 +110,36 @@ if __name__ == "__main__":
                 else:
                     assert len(args.input) == 1, "Please specify a directory with args.output"
                     out_filename = args.output
-                if args.format == "visual":
+                if args.format == "visual" or args.format == "both":
                     visualized_output.save(out_filename)
-                elif args.format == "bbox":
+                if args.format == "json" or args.format == "both":
                     out_path = os.path.join(out_filename, path)
-                    pickle.dump(predictions, open(out_path, "wb"))
+
+                    bbox = list(predictions["instances"].pred_boxes)
+                    classes = list(predictions["instances"].pred_classes)
+                    conf = list(predictions["instances"].scores)
+
+                    LENGTH_RESULTS = len(bbox)
+                    gpu = torch.cuda.is_available()
+
+                    if gpu:
+                        jbbox = [bbox[i].cpu().tolist() for i in range(LENGTH_RESULTS)]
+                        jclasses = [classes[i].cpu().tolist() for i in range(LENGTH_RESULTS)]
+                        jconf = [conf[i].cpu().tolist() for i in range(LENGTH_RESULTS)]
+                    else:
+                        jbbox = [bbox[i].tolist() for i in range(LENGTH_RESULTS)]
+                        jclasses = [classes[i].tolist() for i in range(LENGTH_RESULTS)]
+                        jconf = [conf[i].tolist() for i in range(LENGTH_RESULTS)]
+
+                    out = {}
+                    for i in range(LENGTH_RESULTS):
+                        out[i] = {"bbox" : jbbox[i]}
+                        out[i]["class"] = jclasses[i]
+                        out[i]["confidence"] = jconf[i]
+
+                    with open("test.json", "w") as f:
+                        json.dump(out, f)
+
             else:
                 cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
                 cv2.imshow(WINDOW_NAME, visualized_output.get_image()[:, :, ::-1])
