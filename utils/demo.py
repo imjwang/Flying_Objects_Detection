@@ -114,7 +114,7 @@ if __name__ == "__main__":
                 if args.format == "visual" or args.format == "both":
                     visualized_output.save(out_filename)
                 if args.format == "json" or args.format == "both":
-                    out_path = os.path.join(out_filename, path + '.json')
+                    out_path = os.path.join(path, out_filename + '.json')
 
                     bbox = list(predictions["instances"].pred_boxes)
                     classes = list(predictions["instances"].pred_classes)
